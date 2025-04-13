@@ -1,0 +1,11 @@
+[package]
+name = "lab6-pis"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+tokio = { version = "~1.44", features = ["full"] }
+axum = { version = "~0.8", features = ["ws"] }
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+futures = "0.3"

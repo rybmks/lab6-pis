@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>WebSocket Chat</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        max-width: 600px;
+        margin: auto;
+      }
+
+      #server-message {
+        background-color: #e0f7fa;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-left: 4px solid #00acc1;
+        font-style: italic;
+        color: #007c91;
+      }
+
+      #log {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f5f5f5;
+        height: 150px;
+        overflow-y: auto;
+      }
+
+      input {
+        width: 75%;
+        padding: 8px;
+        font-size: 14px;
+      }
+
+      button {
+        padding: 8px 12px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body onload="document.getElementById('msg').focus()">
+    <h2>WebSocket Chat</h2>
+
+    <div id="server-message">No messages yet.</div>
+    <div id="log"></div>
+
+    <input type="text" id="msg" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+      const socket = new WebSocket("ws://localhost:3000/ws");
+
+      socket.onopen = () => {
+        console.log("Connected to WebSocket server");
+      };
+
+      socket.onmessage = function (event) {
+        const banner = document.getElementById("server-message");
+        banner.textContent = event.data;
+
+        const log = document.getElementById("log");
+        const msg = document.createElement("div");
+        msg.textContent = event.data;
+        log.appendChild(msg);
+        log.scrollTop = log.scrollHeight;
+      };
+
+      socket.onclose = () => {
+        const banner = document.getElementById("server-message");
+        banner.textContent = "Connection closed.";
+      };
+
+      function sendMessage() {
+        const input = document.getElementById("msg");
+        const text = input.value.trim();
+        if (text !== "") {
+          socket.send(text);
+          input.value = "";
+        }
+      }
+
+      document.getElementById("msg").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") sendMessage();
+      });
+    </script>
+  </body>
+</html>
